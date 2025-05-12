@@ -120,9 +120,11 @@ const Agent = ({
     if (type === "generate") {
       await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
         variableValues: {
-          username: userName,
-          userid: userId,
+          username: userName!,
+          userid: userId!,
         },
+        clientMessages: [],
+        serverMessages: [],
       });
     } else {
       let formattedQuestions = "";
@@ -130,13 +132,14 @@ const Agent = ({
         formattedQuestions = questions
           .map((question) => `- ${question}`)
           .join("\n");
+        await vapi.start(interviewer, {
+          variableValues: {
+            questions: formattedQuestions,
+          },
+          clientMessages: [],
+          serverMessages: [],
+        });
       }
-
-      await vapi.start(interviewer, {
-        variableValues: {
-          questions: formattedQuestions,
-        },
-      });
     }
   };
 
@@ -144,6 +147,10 @@ const Agent = ({
     setCallStatus(CallStatus.FINISHED);
     vapi.stop();
   };
+
+  const latestMessage = messages[messages.length - 1]?.content;
+  const isCallInactiveOrFInished =
+    callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED;
 
   return (
     <>
@@ -182,13 +189,13 @@ const Agent = ({
         <div className="transcript-border">
           <div className="transcript">
             <p
-              key={lastMessage}
+              key={latestMessage}
               className={cn(
                 "transition-opacity duration-500 opacity-0",
                 "animate-fadeIn opacity-100"
               )}
             >
-              {lastMessage}
+              {latestMessage}
             </p>
           </div>
         </div>
@@ -205,9 +212,7 @@ const Agent = ({
             />
 
             <span className="relative">
-              {callStatus === "INACTIVE" || callStatus === "FINISHED"
-                ? "Call"
-                : ". . ."}
+              {isCallInactiveOrFInished ? "Call" : ". . ."}
             </span>
           </button>
         ) : (
