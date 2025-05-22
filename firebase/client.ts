@@ -5,10 +5,8 @@ import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: process.env.GOOGLE_API,
+  apiKey: process.env.NEXT_PUBLIC_GOOGLE_API,
   authDomain: "interview-ed4b5.firebaseapp.com",
   projectId: "interview-ed4b5",
   storageBucket: "interview-ed4b5.firebasestorage.app",
@@ -17,7 +15,6 @@ const firebaseConfig = {
   measurementId: "G-EWC8CNR94C",
 };
 
-// Initialize Firebase
 const app = !getApps.length ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
